@@ -18,12 +18,12 @@ layout="wide"
 
 # LOAD DATA
 
-# ======================================
-
+# =====================================
 @st.cache_data
 def load_data():
     url = "https://raw.githubusercontent.com/DachsteinSilalahi/Dataset_kelompok2/main/twitchdata-update.csv"
     return pd.read_csv(url)
+
 df = load_data()
 
 # ======================================
