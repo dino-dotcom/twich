@@ -3,22 +3,19 @@ import pandas as pd
 import plotly.express as px
 
 # ======================================
-
 # KONFIGURASI
-
 # ======================================
 
 st.set_page_config(
-page_title="Dashboard Analisis Twitch",
-page_icon="🎮",
-layout="wide"
+    page_title="Dashboard Analisis Twitch",
+    page_icon="🎮",
+    layout="wide"
 )
 
 # ======================================
-
 # LOAD DATA
+# ======================================
 
-# =====================================
 @st.cache_data
 def load_data():
     url = "https://raw.githubusercontent.com/DachsteinSilalahi/Dataset_kelompok2/main/twitchdata-update.csv"
@@ -27,303 +24,289 @@ def load_data():
 df = load_data()
 
 # ======================================
-
 # SIDEBAR
-
 # ======================================
 
 menu = st.sidebar.radio(
-"Pilih Menu",
-[
-"Home",
-"Dataset",
-"EDA",
-"Visualisasi",
-"Korelasi",
-"Machine Learning",
-"Kesimpulan"
-]
+    "Pilih Menu",
+    [
+        "Home",
+        "Dataset",
+        "EDA",
+        "Visualisasi",
+        "Korelasi",
+        "Machine Learning",
+        "Kesimpulan"
+    ]
 )
 
 # ======================================
-
 # HOME
-
 # ======================================
 
 if menu == "Home":
 
-```
-st.title("🎮 Dashboard Analisis Twitch Streamers")
+    st.title("🎮 Dashboard Analisis Twitch Streamers")
 
-col1,col2,col3,col4 = st.columns(4)
+    col1, col2, col3, col4 = st.columns(4)
 
-col1.metric(
-    "Jumlah Streamer",
-    len(df)
-)
+    col1.metric(
+        "Jumlah Streamer",
+        len(df)
+    )
 
-col2.metric(
-    "Jumlah Kolom",
-    df.shape[1]
-)
+    col2.metric(
+        "Jumlah Kolom",
+        df.shape[1]
+    )
 
-col3.metric(
-    "Jumlah Bahasa",
-    df["Language"].nunique()
-)
+    col3.metric(
+        "Jumlah Bahasa",
+        df["Language"].nunique()
+    )
 
-col4.metric(
-    "Partnered",
-    df["Partnered"].sum()
-)
+    col4.metric(
+        "Jumlah Partnered",
+        int(df["Partnered"].sum())
+    )
 
-st.markdown("---")
+    st.markdown("---")
 
-st.write("""
-Dashboard ini dibuat untuk analisis data Top Streamers on Twitch.
-Dashboard mencakup:
-- Exploratory Data Analysis
-- Visualisasi Data
-- Analisis Korelasi
-- Machine Learning Classification
-""")
-```
+    st.write("""
+    Dashboard ini dibuat untuk analisis data Top Streamers on Twitch.
+
+    Dashboard mencakup:
+    - Exploratory Data Analysis (EDA)
+    - Visualisasi Data
+    - Analisis Korelasi
+    - Machine Learning Classification
+    """)
 
 # ======================================
-
 # DATASET
-
 # ======================================
 
 elif menu == "Dataset":
 
-```
-st.title("📂 Dataset")
+    st.title("📂 Dataset")
 
-st.dataframe(df)
+    st.dataframe(df)
 
-st.subheader("Tipe Data")
+    st.subheader("Informasi Dataset")
 
-st.write(df.dtypes)
-```
+    st.write(f"Jumlah Baris: {df.shape[0]}")
+    st.write(f"Jumlah Kolom: {df.shape[1]}")
+
+    st.subheader("Tipe Data")
+
+    st.dataframe(df.dtypes.astype(str))
 
 # ======================================
-
 # EDA
-
 # ======================================
 
 elif menu == "EDA":
 
-```
-st.title("📊 Exploratory Data Analysis")
+    st.title("📊 Exploratory Data Analysis")
 
-st.subheader("Statistik Deskriptif")
+    st.subheader("Statistik Deskriptif")
 
-st.dataframe(df.describe())
+    st.dataframe(df.describe())
 
-st.subheader("Missing Values")
+    st.subheader("Missing Values")
 
-st.dataframe(
-    pd.DataFrame(
+    missing_df = pd.DataFrame(
         df.isnull().sum(),
         columns=["Missing Value"]
     )
-)
-```
+
+    st.dataframe(missing_df)
 
 # ======================================
-
 # VISUALISASI
-
 # ======================================
 
 elif menu == "Visualisasi":
 
-```
-st.title("📈 Visualisasi")
+    st.title("📈 Visualisasi Data")
 
-tab1, tab2, tab3, tab4 = st.tabs([
-    "Followers",
-    "Watch Time",
-    "Peak Viewers",
-    "Language"
-])
+    tab1, tab2, tab3, tab4 = st.tabs([
+        "Followers",
+        "Watch Time",
+        "Peak Viewers",
+        "Language"
+    ])
 
-with tab1:
+    with tab1:
 
-    top10 = df.nlargest(10,"Followers")
+        top10 = df.nlargest(10, "Followers")
 
-    fig = px.bar(
-        top10,
-        x="Channel",
-        y="Followers",
-        title="Top 10 Followers"
-    )
+        fig = px.bar(
+            top10,
+            x="Channel",
+            y="Followers",
+            title="Top 10 Followers"
+        )
 
-    st.plotly_chart(fig)
+        st.plotly_chart(fig, use_container_width=True)
 
-with tab2:
+    with tab2:
 
-    top10 = df.nlargest(
-        10,
-        "Watch time(Minutes)"
-    )
+        top10 = df.nlargest(
+            10,
+            "Watch time(Minutes)"
+        )
 
-    fig = px.bar(
-        top10,
-        x="Channel",
-        y="Watch time(Minutes)",
-        title="Top 10 Watch Time"
-    )
+        fig = px.bar(
+            top10,
+            x="Channel",
+            y="Watch time(Minutes)",
+            title="Top 10 Watch Time"
+        )
 
-    st.plotly_chart(fig)
+        st.plotly_chart(fig, use_container_width=True)
 
-with tab3:
+    with tab3:
 
-    top10 = df.nlargest(
-        10,
-        "Peak viewers"
-    )
+        top10 = df.nlargest(
+            10,
+            "Peak viewers"
+        )
 
-    fig = px.bar(
-        top10,
-        x="Channel",
-        y="Peak viewers",
-        title="Top 10 Peak Viewers"
-    )
+        fig = px.bar(
+            top10,
+            x="Channel",
+            y="Peak viewers",
+            title="Top 10 Peak Viewers"
+        )
 
-    st.plotly_chart(fig)
+        st.plotly_chart(fig, use_container_width=True)
 
-with tab4:
+    with tab4:
 
-    lang = df["Language"].value_counts().head(10)
+        lang = df["Language"].value_counts().head(10)
 
-    fig = px.pie(
-        values=lang.values,
-        names=lang.index,
-        title="Top 10 Languages"
-    )
+        fig = px.pie(
+            values=lang.values,
+            names=lang.index,
+            title="Top 10 Languages"
+        )
 
-    st.plotly_chart(fig)
-```
+        st.plotly_chart(fig, use_container_width=True)
 
 # ======================================
-
 # KORELASI
-
 # ======================================
 
 elif menu == "Korelasi":
 
-```
-st.title("🔗 Analisis Korelasi")
+    st.title("🔗 Analisis Korelasi")
 
-pilihan = st.selectbox(
-    "Pilih Korelasi",
-    [
-        "Followers vs Followers gained",
-        "Watch time vs Followers gained",
-        "Peak viewers vs Followers gained",
-        "Average viewers vs Followers gained",
-        "Views gained vs Followers gained",
-        "Stream time vs Followers gained"
-    ]
-)
+    pilihan = st.selectbox(
+        "Pilih Korelasi",
+        [
+            "Followers vs Followers gained",
+            "Watch time vs Followers gained",
+            "Peak viewers vs Followers gained",
+            "Average viewers vs Followers gained",
+            "Views gained vs Followers gained",
+            "Stream time vs Followers gained"
+        ]
+    )
 
-mapping = {
-    "Followers vs Followers gained":
-        ("Followers","Followers gained"),
+    mapping = {
+        "Followers vs Followers gained":
+            ("Followers", "Followers gained"),
 
-    "Watch time vs Followers gained":
-        ("Watch time(Minutes)","Followers gained"),
+        "Watch time vs Followers gained":
+            ("Watch time(Minutes)", "Followers gained"),
 
-    "Peak viewers vs Followers gained":
-        ("Peak viewers","Followers gained"),
+        "Peak viewers vs Followers gained":
+            ("Peak viewers", "Followers gained"),
 
-    "Average viewers vs Followers gained":
-        ("Average viewers","Followers gained"),
+        "Average viewers vs Followers gained":
+            ("Average viewers", "Followers gained"),
 
-    "Views gained vs Followers gained":
-        ("Views gained","Followers gained"),
+        "Views gained vs Followers gained":
+            ("Views gained", "Followers gained"),
 
-    "Stream time vs Followers gained":
-        ("Stream time(minutes)","Followers gained")
-}
+        "Stream time vs Followers gained":
+            ("Stream time(minutes)", "Followers gained")
+    }
 
-x_col,y_col = mapping[pilihan]
+    x_col, y_col = mapping[pilihan]
 
-corr = df[x_col].corr(df[y_col])
+    corr = df[x_col].corr(df[y_col])
 
-st.metric(
-    "Nilai Korelasi",
-    round(corr,4)
-)
+    st.metric(
+        "Nilai Korelasi",
+        round(corr, 4)
+    )
 
-fig = px.scatter(
-    df,
-    x=x_col,
-    y=y_col,
-    trendline="ols"
-)
+    fig = px.scatter(
+        df,
+        x=x_col,
+        y=y_col,
+        trendline="ols",
+        title=pilihan
+    )
 
-st.plotly_chart(fig)
-```
+    st.plotly_chart(fig, use_container_width=True)
 
 # ======================================
-
 # MACHINE LEARNING
-
 # ======================================
 
 elif menu == "Machine Learning":
 
-```
-st.title("🤖 Machine Learning")
+    st.title("🤖 Machine Learning")
 
-hasil = pd.DataFrame({
-    "Model":[
-        "Logistic Regression",
-        "Decision Tree",
-        "Random Forest"
-    ],
-    "Keterangan":[
-        "Baseline Model",
-        "Rule Based",
-        "Best Model"
-    ]
-})
+    hasil = pd.DataFrame({
+        "Model": [
+            "Logistic Regression",
+            "Decision Tree",
+            "Random Forest"
+        ],
+        "Keterangan": [
+            "Baseline Model",
+            "Rule Based",
+            "Best Model"
+        ]
+    })
 
-st.dataframe(hasil)
+    st.dataframe(hasil)
 
-st.success(
-    "Random Forest dipilih sebagai model terbaik berdasarkan hasil evaluasi kelompok."
-)
-```
+    fig = px.bar(
+        hasil,
+        x="Model",
+        y=[1, 2, 3],
+        title="Perbandingan Model"
+    )
+
+    st.plotly_chart(fig, use_container_width=True)
+
+    st.success(
+        "Random Forest dipilih sebagai model terbaik berdasarkan hasil evaluasi kelompok."
+    )
 
 # ======================================
-
 # KESIMPULAN
-
 # ======================================
 
 elif menu == "Kesimpulan":
 
-```
-st.title("📝 Kesimpulan")
+    st.title("📝 Kesimpulan")
 
-st.write("""
-1. Dataset memiliki 1000 streamer Twitch.
+    st.write("""
+    1. Dataset memiliki 1000 streamer Twitch.
 
-2. Bahasa Inggris merupakan bahasa yang paling dominan.
+    2. Bahasa Inggris merupakan bahasa yang paling dominan.
 
-3. Mayoritas streamer telah berstatus Partnered.
+    3. Mayoritas streamer telah berstatus Partnered.
 
-4. Followers memiliki korelasi kuat dengan Followers Gained.
+    4. Followers memiliki korelasi kuat dengan Followers Gained.
 
-5. Watch Time memiliki hubungan positif terhadap pertumbuhan followers.
+    5. Watch Time memiliki hubungan positif terhadap pertumbuhan followers.
 
-6. Random Forest menjadi model terbaik untuk klasifikasi status Partnered.
-""")
-```
+    6. Random Forest menjadi model terbaik untuk klasifikasi status Partnered.
+    """)
